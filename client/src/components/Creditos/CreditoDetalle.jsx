@@ -493,6 +493,8 @@ const CreditoDetalle = ({ credito: creditoInicial, clienteId, cliente, onClose, 
       if (response.success) setCreditoActualizado(response.data);
     } catch (err) {
       skipSyncNext.current = false;
+      console.error('Error agregando nota:', err);
+      alert(err.message || 'Error al guardar la nota. Verifica tu conexión e intenta nuevamente.');
     }
   };
 
@@ -505,6 +507,8 @@ const CreditoDetalle = ({ credito: creditoInicial, clienteId, cliente, onClose, 
         if (response.success) setCreditoActualizado(response.data);
       } catch (err) {
         skipSyncNext.current = false;
+        console.error('Error eliminando nota:', err);
+        alert(err.message || 'Error al eliminar la nota. Intenta nuevamente.');
       }
     }
   };
@@ -662,19 +666,21 @@ const CreditoDetalle = ({ credito: creditoInicial, clienteId, cliente, onClose, 
       return;
     }
 
-    setMostrarFormularioAbono(false);
-    setValorAbono('');
-    setDescripcionAbono('');
-    setFechaAbono(obtenerFechaHoy());
-
     try {
       setProcesandoPago(true);
       skipSyncNext.current = true;
       await agregarAbono(clienteId, credito.id, parseFloat(valorAbono), descripcionAbono, fechaAbono);
       const response = await api.get(`/creditos/${credito.id}`);
       if (response.success) setCreditoActualizado(response.data);
+      // Solo limpiar/cerrar el formulario si el abono realmente se guardó
+      setMostrarFormularioAbono(false);
+      setValorAbono('');
+      setDescripcionAbono('');
+      setFechaAbono(obtenerFechaHoy());
     } catch (err) {
       skipSyncNext.current = false;
+      console.error('Error agregando abono:', err);
+      alert(err.message || 'Error al guardar el abono. Verifica tu conexión e intenta nuevamente.');
     } finally {
       setProcesandoPago(false);
     }
@@ -689,6 +695,8 @@ const CreditoDetalle = ({ credito: creditoInicial, clienteId, cliente, onClose, 
         if (response.success) setCreditoActualizado(response.data);
       } catch (err) {
         skipSyncNext.current = false;
+        console.error('Error eliminando abono:', err);
+        alert(err.message || 'Error al eliminar el abono. Intenta nuevamente.');
       }
     }
   };
@@ -824,14 +832,15 @@ const CreditoDetalle = ({ credito: creditoInicial, clienteId, cliente, onClose, 
         });
         const response = await api.get(`/creditos/${credito.id}`);
         if (response.success) setCreditoActualizado(response.data);
+        // Solo cerrar el editor si la edición realmente se guardó
+        setAbonoEnEdicion(null);
       } catch (err) {
         skipSyncNext.current = false;
+        console.error('Error editando abono:', err);
+        alert(err.message || 'Error al editar el abono. Verifica tu conexión e intenta nuevamente.');
       }
     };
     processEdit();
-
-    setAbonoEnEdicion(null);
-
   };
 
   const handleAgregarDescuento = () => {
