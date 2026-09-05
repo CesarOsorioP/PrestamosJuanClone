@@ -57,6 +57,10 @@ const CreditoDetalle = ({ credito: creditoInicial, clienteId, cliente, onClose, 
         const response = await api.get(`/creditos/${creditoInicial.id}`);
         if (response.success && response.data) {
           setCreditoActualizado(response.data);
+          // El backend es la fuente de verdad: evitar que el siguiente sync del
+          // contexto (GET /clientes, copia embebida posiblemente desactualizada)
+          // sobrescriba los datos recién cargados del crédito.
+          skipSyncNext.current = true;
         }
       } catch (error) {
         console.error('Error cargando crédito del backend:', error);
