@@ -7,7 +7,11 @@ import mongoose from 'mongoose';
 // embebida en Cliente.creditos[] siga reflejando ese historial.
 const registroPagoSchema = new mongoose.Schema({
   clienteId: {
-    type: mongoose.Schema.Types.ObjectId,
+    // String y no ObjectId: Cliente._id es String a propósito (soporta IDs numéricos
+    // heredados de clientes previos a la migración, ej. "1765847020493"). Con ObjectId
+    // aquí, el insertMany fallaba con BSONError para todo cliente con ID heredado y la
+    // bitácora quedaba con un punto ciego total para esos clientes.
+    type: String,
     ref: 'Cliente',
     required: true
   },

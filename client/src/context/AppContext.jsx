@@ -517,7 +517,8 @@ export const AppProvider = ({ children }) => {
         multaId
       };
       const response = await api.post(`/creditos/${creditoId}/abonos`, payload);
-      if (response.success) await fetchData();
+      if (!response.success) throw new Error(response.error || 'Error al guardar el abono');
+      await fetchData();
     } catch (error) {
       console.error('Error agregando abono:', error);
       throw error;
@@ -527,9 +528,8 @@ export const AppProvider = ({ children }) => {
   const editarAbono = async (clienteId, creditoId, abonoId, datosActualizados) => {
     try {
       const response = await api.put(`/creditos/${creditoId}/abonos/${abonoId}`, datosActualizados);
-      if (response.success) {
-        await fetchData();
-      }
+      if (!response.success) throw new Error(response.error || 'Error al editar el abono');
+      await fetchData();
     } catch (error) {
       console.error('Error editando abono:', error);
       throw error;
@@ -539,7 +539,8 @@ export const AppProvider = ({ children }) => {
   const eliminarAbono = async (clienteId, creditoId, abonoId) => {
     try {
       const response = await api.delete(`/creditos/${creditoId}/abonos/${abonoId}`);
-      if (response.success) await fetchData();
+      if (!response.success) throw new Error(response.error || 'Error al eliminar el abono');
+      await fetchData();
     } catch (error) {
       console.error('Error eliminando abono:', error);
       throw error;
