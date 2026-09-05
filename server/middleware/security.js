@@ -8,9 +8,7 @@ import rateLimit from 'express-rate-limit';
 export const corsOptions = {
   origin: [
     process.env.CLIENT_URL,
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
+    ...Array.from({ length: 100 }, (_, i) => `http://localhost:${5173 + i}`),
     'http://localhost:3000',
     'https://prestamos-juan-clone.vercel.app'
   ].filter(Boolean),

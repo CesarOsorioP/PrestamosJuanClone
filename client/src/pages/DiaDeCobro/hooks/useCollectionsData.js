@@ -143,7 +143,8 @@ export const useCollectionsData = ({
                 }
 
                 const cuotasCobradasHoy = credito.cuotas.filter(cuota => {
-                    return cuota.pagado && cuota.fechaPago === fechaSeleccionadaStr && !cuota.tieneAbono;
+                    const fPago = cuota.fechaPago ? (typeof cuota.fechaPago === 'string' ? cuota.fechaPago.split('T')[0] : format(cuota.fechaPago, 'yyyy-MM-dd')) : null;
+                    return cuota.pagado && fPago === fechaSeleccionadaStr && !cuota.tieneAbono;
                 });
                 if (cuotasCobradasHoy.length > 0) {
                     tieneActividadHoy = true;
@@ -151,7 +152,7 @@ export const useCollectionsData = ({
                 }
 
                 const cuotasAbonadasHoy = credito.cuotas.filter(cuota =>
-                    cuota.abonosCuota && cuota.abonosCuota.some(a => a.fecha === fechaSeleccionadaStr)
+                    cuota.abonosCuota && cuota.abonosCuota.some(a => (typeof a.fecha === 'string' ? a.fecha.split('T')[0] : format(new Date(a.fecha), 'yyyy-MM-dd')) === fechaSeleccionadaStr)
                 );
                 const abonosGeneralesHoy = (credito.abonos || []).filter(abono => {
                     const f = abono.fecha?.split('T')[0] || abono.fecha;
@@ -161,7 +162,7 @@ export const useCollectionsData = ({
                 if (cuotasAbonadasHoy.length > 0 || abonosGeneralesHoy.length > 0) {
                     tieneActividadHoy = true;
                     cuotasAbonadasHoy.forEach(c => {
-                        const abonos = c.abonosCuota.filter(a => a.fecha === fechaSeleccionadaStr);
+                        const abonos = c.abonosCuota.filter(a => (typeof a.fecha === 'string' ? a.fecha.split('T')[0] : format(new Date(a.fecha), 'yyyy-MM-dd')) === fechaSeleccionadaStr);
                         totalAbonadoHoy += abonos.reduce((s, a) => s + a.valor, 0);
                     });
                     totalAbonadoHoy += abonosGeneralesHoy.reduce((s, a) => s + a.valor, 0);

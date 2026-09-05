@@ -23,6 +23,9 @@ seedCarteras.js
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# DevContainer configuration (local only)
+.devcontainer
 *.suo
 *.ntvs*
 *.njsproj
